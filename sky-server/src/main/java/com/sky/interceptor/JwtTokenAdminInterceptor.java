@@ -1,6 +1,7 @@
 package com.sky.interceptor;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.context.BaseContext;
 import com.sky.properties.JwtProperties;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -17,7 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 @Slf4j
-public class JwtTokenAdminInterceptor implements HandlerInterceptor {
+public class JwtTokenAdminInterceptor implements HandlerInterceptor
+{
 
     @Autowired
     private JwtProperties jwtProperties;
@@ -41,12 +43,13 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         //1、从请求头中获取令牌
         String token = request.getHeader(jwtProperties.getAdminTokenName());
 
-        //2、校验令牌
+        //2、校验令牌,如果令牌有效，JwtUtil.parseJWT()解析出的Claims对象将包含用户信息,否则抛出异常
         try {
             log.info("jwt校验:{}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
             log.info("当前员工id：", empId);
+            BaseContext.setCurrentId(empId);
             //3、通过，放行
             return true;
         } catch (Exception ex) {
