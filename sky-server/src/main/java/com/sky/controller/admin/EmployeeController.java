@@ -100,6 +100,22 @@ public class EmployeeController {
     }
 
     /**
+     * 启用禁用员工账号
+     * @param status
+     * @param id
+     * @return
+     */
+
+    //由于前端是禁用员工→启用，正常员工→禁用，因此前端是已经知道要设置的status的，因此通过路径参数来传
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用禁用员工账号")
+    public Result startOrStop(@PathVariable Integer status,@RequestParam Long id){
+        log.info("启用禁用员工账号：{},{}",status,id);
+        employeeService.startOrStop(status,id);//后绪步骤定义
+        return Result.success();
+    }
+
+    /**
      * 退出
      *
      * @return
