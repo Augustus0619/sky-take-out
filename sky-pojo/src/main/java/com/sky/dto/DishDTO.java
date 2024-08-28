@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class DishDTO implements Serializable {
+public class DishDTO implements Serializable
+{
 
     private Long id;
     //菜品名称
@@ -23,7 +24,7 @@ public class DishDTO implements Serializable {
     private String description;
     //0 停售 1 起售
     private Integer status;
-    //口味
+    //口味 DishFlavor对象示例 甜度:半糖
     private List<DishFlavor> flavors = new ArrayList<>();
 
 }
