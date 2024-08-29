@@ -32,8 +32,8 @@ public class DishVO implements Serializable {
     private Integer status;
     //更新时间
     private LocalDateTime updateTime;
-    //分类名称:相比Dish多出来的字段，用于给前端展示
-    private String categoryName;
+
+    private String categoryName;   //分类名称:相比Dish多出来的字段，用于给前端展示
     //菜品关联的口味
     private List<DishFlavor> flavors = new ArrayList<>();
 

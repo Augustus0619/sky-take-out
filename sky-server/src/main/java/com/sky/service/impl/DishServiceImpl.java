@@ -9,6 +9,7 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.entity.Employee;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
@@ -106,5 +107,80 @@ public class DishServiceImpl implements DishService {
             //删除菜品关联的口味数据
             dishFlavorMapper.deleteByDishId(id);
         }
+    }
+
+    /**
+     * 根据id查询菜品和对应的口味数据
+     *
+     * @param id
+     * @return
+     */
+    public DishVO getByIdWithFlavor(Long id)
+    {
+        Dish dish = dishMapper.getById(id);
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish,dishVO);
+        List<DishFlavor> flavors = dishFlavorMapper.getFlavorsByDishId(id);
+        dishVO.setFlavors(flavors);
+        return dishVO;
+    }
+
+
+    /**
+     * 修改菜品
+     *
+     * @param dishDTO
+     * @return
+     */
+    @Override
+    @Transactional
+    public void updateWithFlavor(DishDTO dishDTO)
+    {
+        //修改菜品基础数据
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO,dish);
+        dishMapper.update(dish);
+
+        Long dishId = dishDTO.getId();
+
+        //删除菜品原有口味数据
+        dishFlavorMapper.deleteByDishId(dishId);
+
+        //插入新的口味数据
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if(flavors != null && flavors.size() > 0)
+        {
+            for (DishFlavor flavor : flavors)
+            {
+                flavor.setDishId(dishId);
+            }
+            dishFlavorMapper.insertBatch(flavors);
+        }
+    }
+
+    /**
+     * 起售或停售菜品
+     * @param status
+     * @param id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id)
+    {
+        Dish dish = Dish.builder().id(id).status(status).build();
+        dishMapper.update(dish);
+    }
+
+    /**
+     * 根据类别id获取菜品信息
+     * @param categoryId
+     * @return
+     */
+    //设计为动态查询，增强代码复用性
+    @Override
+    public List<Dish> list(Long categoryId)
+    {
+        Dish dish = Dish.builder().categoryId(categoryId).status(StatusConstant.ENABLE).build();
+        List<Dish> list = dishMapper.list(dish);
+        return list;
     }
 }
