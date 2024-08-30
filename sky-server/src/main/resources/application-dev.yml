@@ -10,3 +10,10 @@ sky:
   alioss:
     endpoint: oss-cn-guangzhou.aliyuncs.com
     bucket-name: hwy-sky-take-out
+
+#这里必须将password改成auth,不然连接不上
+  redis:
+    host: localhost
+    port: 6379
+    auth: "123456"
+    database: 10
