@@ -40,6 +40,7 @@ public class HttpClientUtil {
         String result = "";
         CloseableHttpResponse response = null;
 
+        //为url添加query参数
         try{
             URIBuilder builder = new URIBuilder(url);
             if(paramMap != null){
@@ -91,12 +92,13 @@ public class HttpClientUtil {
             HttpPost httpPost = new HttpPost(url);
 
             // 创建参数列表
+            //将paramMap中的参数封装到paramList（List<NameValuePair>）中，每个NameValuePair对应一个表单字段
             if (paramMap != null) {
                 List<NameValuePair> paramList = new ArrayList();
                 for (Map.Entry<String, String> param : paramMap.entrySet()) {
                     paramList.add(new BasicNameValuePair(param.getKey(), param.getValue()));
                 }
-                // 模拟表单
+                // 将参数列表封装为UrlEncodedFormEntity对象并设置到HttpPost中（httpPost.setEntity(entity)），用于模拟表单提交
                 UrlEncodedFormEntity entity = new UrlEncodedFormEntity(paramList);
                 httpPost.setEntity(entity);
             }
