@@ -83,6 +83,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService
         }
     }
 
+    /**
+     * 查看购物车商品
+     * @return
+     */
     @Override
     public List<ShoppingCart> showShoppingCart()
     {
@@ -90,9 +94,42 @@ public class ShoppingCartServiceImpl implements ShoppingCartService
         return shoppingCartMapper.list(shoppingCart);
     }
 
+    /**
+     * 清空当前用户购物车
+     */
     @Override
     public void cleanShoppingCart()
     {
         shoppingCartMapper.deleteByUserId(BaseContext.getCurrentId());
+    }
+
+    /**
+     * 减去购物车中一件商品
+     * @param shoppingCartDTO
+     */
+    @Override
+    public void subShoppingCart(ShoppingCartDTO shoppingCartDTO)
+    {
+        //查询当前用户购物车数据
+        ShoppingCart shoppingCart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO,shoppingCart);
+        Long userId = BaseContext.getCurrentId();
+        shoppingCart.setUserId(userId);
+
+        List<ShoppingCart> shoppingCartList = shoppingCartMapper.list(shoppingCart);
+        if(shoppingCartList != null && shoppingCartList.size() > 0)
+        {
+            shoppingCart = shoppingCartList.get(0);
+            Integer number = shoppingCart.getNumber();
+            if(number == 1)
+            {
+                shoppingCartMapper.deleteById(shoppingCart.getId());
+            }
+            else
+            {
+                shoppingCart.setNumber(shoppingCart.getNumber() - 1);
+                shoppingCartMapper.updateNumberById(shoppingCart);
+            }
+        }
     }
 }
